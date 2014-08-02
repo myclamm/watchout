@@ -26,25 +26,43 @@ var gameBoard = d3.select('.scoreboard').append('svg:svg')
 // fill it with red
 
 var makePlayer = function(){
-  d3.select('svg')
+  var apple = [[400,200]]
+  d3.select('svg').selectAll('.goodGuy')
+  .data(apple)
+  .enter()
   .append('circle')
   .attr('r',"10")
   .attr("class", "goodGuy")
   .attr('fill','##0000FF')
-  .attr("cx", gameOptions.width/2)
-  .attr("cy", gameOptions.height/2)
+  .attr("cx", function(d){return d[0]})
+  .attr("cy", function(d){return d[1]})
 };
 
 makePlayer();
-
+//console.log(d3.select('googGuy').attr('cx'))
 var drag = d3.behavior.drag()
-    .on("drag", dragmove);
+    .on("drag", function(){
+      var x = d3.event.x;
+      var y = d3.event.y;
+      if(x>gameOptions.width){
+        x = gameOptions.width;
+      }
+      if(y>gameOptions.height){
+        y = gameOptions.height;
+      }
+      if(y<0){
+        y = 0
+      }
+      if(x<0){
+        x=0
+      }
+      d3.select(this)
+      .attr('cx',x)
+      .attr('cy',y)
+    });
 
-function dragmove(d) {
-  var x = d3.event.x;
-  var y = d3.event.y;
-  d3.select(".goodGuy").attr("transform", "translate(" + x + "," + y + ")");
-}
+d3.select(".goodGuy")
+
 d3.selectAll(".goodGuy").call(drag);
 
 // var dragMove = function(d){
@@ -57,7 +75,6 @@ d3.selectAll(".goodGuy").call(drag);
 
 // d3.select('svg').selectAll('.goodGuy')
 //   .attr('id','draggable').call(drag);
-
 
 
 var makeEnemy = function(){
@@ -95,16 +112,33 @@ var randomizeLocs = function(){
 
 var changeEnemyLoc = function() {
   randomizeLocs()
-  console.log('hi')
   d3.select('svg').selectAll('.badGuys')
     .data(enemyLoc)
     .transition().duration(1000)
-    .attr("cx",function(d){return d['cx']})
-    .attr("cy",function(d){return d['cy']})
+    .attrTween("cx",function(d,i,a){
+
+      setInterval(function(){collisionChecker(i)},1);
+      return d3.interpolate(a,d['cx'])})
+    .attrTween("cy",function(d,i,a){
+      setInterval(function(){collisionChecker(i)},1);
+      return d3.interpolate(a,d['cy'])
+    })
+
 };
 
 setInterval(changeEnemyLoc,1000)
 
+var collisionChecker = function(i){
+
+  var goodPosX = d3.select('.goodGuy').attr('cx');
+  console.log("enemy" +":"+enemyLoc[i]['cx'] + "goodGuy"+goodPosX)
+  var goodPosY = d3.select('.goodGuy').attr('cy');
+  if((Math.abs(enemyLoc[i]['cx'] - goodPosX) < 5)){
+    alert("enemy" +":"+enemyLoc[i]['cx'] + "goodGuy"+goodPosX)
+  }
+};
+
+//setInterval(collisionChecker,10)
 
 
 
