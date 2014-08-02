@@ -59,6 +59,7 @@ var drag = d3.behavior.drag()
       d3.select(this)
       .attr('cx',x)
       .attr('cy',y)
+      //collisionChecker()
     });
 
 d3.select(".goodGuy")
@@ -88,8 +89,6 @@ var makeEnemy = function(){
 };
 
 
-
-
 var createNEnemies= function() {
   for(var i=0;i<gameOptions.nEnemies;i++){
     makeEnemy();
@@ -103,42 +102,65 @@ var enemyLoc = [];
 var randomizeLocs = function(){
   enemyLoc = [];
   for(var i=0;i<gameOptions.nEnemies;i++){
-    enemyLoc.push({'cx': Math.floor(Math.random()*690)})
+    enemyLoc.push({'cx': Math.floor(Math.random()*700)})
   }
   for(var i=0;i<gameOptions.nEnemies;i++){
-    enemyLoc[i]['cy'] = Math.floor(Math.random()*440)
+    enemyLoc[i]['cy'] = Math.floor(Math.random()*450)
   }
 }
+
 
 var changeEnemyLoc = function() {
   randomizeLocs()
   d3.select('svg').selectAll('.badGuys')
     .data(enemyLoc)
     .transition().duration(1000)
-    .attrTween("cx",function(d,i,a){
-
-      setInterval(function(){collisionChecker(i)},1);
-      return d3.interpolate(a,d['cx'])})
-    .attrTween("cy",function(d,i,a){
-      setInterval(function(){collisionChecker(i)},1);
-      return d3.interpolate(a,d['cy'])
-    })
-
+    .attr("cx", function(d) {return d['cx']})
+    .attr("cy", function(d) {return d['cy']})
 };
 
 setInterval(changeEnemyLoc,1000)
+var highscore = 0;
+var counter = 0;
+var tempHigh = 0;
+var collisionChecker = function(enemy){
 
-var collisionChecker = function(i){
-
-  var goodPosX = d3.select('.goodGuy').attr('cx');
-  console.log("enemy" +":"+enemyLoc[i]['cx'] + "goodGuy"+goodPosX)
-  var goodPosY = d3.select('.goodGuy').attr('cy');
-  if((Math.abs(enemyLoc[i]['cx'] - goodPosX) < 5)){
-    alert("enemy" +":"+enemyLoc[i]['cx'] + "goodGuy"+goodPosX)
+  // var goodPosX = d3.select('.goodGuy').attr('cx');
+  // var goodPosY = d3.select('.goodGuy').attr('cy');
+  for (var i = 0; i < d3.selectAll('.badGuys').data(enemyLoc)[0].length; i++) {
+    if((Math.abs(d3.selectAll('.badGuys').data(enemyLoc)[0][i].cx.animVal.value - d3.select('.goodGuy').attr('cx')) < 20) &&
+       (Math.abs(d3.selectAll('.badGuys').data(enemyLoc)[0][i].cy.animVal.value - d3.select('.goodGuy').attr('cy')) < 20)){
+        counter = 0;
+    }
+    if (tempHigh>=highscore) {
+      highscore = tempHigh;
+      tempHigh = 0;
+      d3.select('.high').select('span').text(highscore);
+    }
   }
 };
 
-//setInterval(collisionChecker,10)
+
+d3.timer(collisionChecker);
 
 
+var newHigh = [];
 
+var scoreMaker = function() {
+
+setInterval(function(){
+  counter++
+  d3.select('.current').select('span')
+    .text(counter);
+  if(counter>=highscore){
+    tempHigh = counter;
+    //newHigh.push(counter);
+  }
+  },200);
+};
+
+scoreMaker();
+//make a function that sets score to 0, and then invokes setinterval to increase score indefinitely, and change highscore variable if score>high
+//
+//add funcationality to collisionchecker:
+//  invoke the score function

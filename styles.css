@@ -4,7 +4,8 @@
 Feel free to use it if you like. */
 
 svg {
-  background: red;
-
+  background: white;
+  border-width: 1px;
+  border-style: solid;
 
 }
