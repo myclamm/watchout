@@ -39,12 +39,29 @@ var createNEnemies= function() {
 
 createNEnemies();
 
+var enemyLoc = [];
+
+var randomizeLocs = function(){
+  enemyLoc = [];
+  for(var i=0;i<30;i++){
+    enemyLoc.push({'cx': Math.floor(Math.random()*690)})
+  }
+  for(var i=0;i<30;i++){
+    enemyLoc[i]['cy'] = Math.floor(Math.random()*440)
+  }
+}
+
 var changeEnemyLoc = function() {
+  randomizeLocs()
+  console.log('hi')
   d3.select('svg').selectAll('.badGuys')
-    .attr("cx",Math.floor(Math.random()*690))
-    .attr("cy",Math.floor(Math.random()*440))
+    .data(enemyLoc)
+    .transition().duration(500)
+    .attr("cx",function(d){return d['cx']})
+    .attr("cy",function(d){return d['cy']})
 };
 
+setInterval(changeEnemyLoc,1000)
 
 
 
