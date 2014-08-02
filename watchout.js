@@ -37,6 +37,28 @@ var makePlayer = function(){
 
 makePlayer();
 
+var drag = d3.behavior.drag()
+    .on("drag", dragmove);
+
+function dragmove(d) {
+  var x = d3.event.x;
+  var y = d3.event.y;
+  d3.select(".goodGuy").attr("transform", "translate(" + x + "," + y + ")");
+}
+d3.selectAll(".goodGuy").call(drag);
+
+// var dragMove = function(d){
+//   d3.select(this)
+//     .style('top',((d3.event.sourceEvent.pageY)-this.offsetHeight/2)+"px")
+//     .style('left',((d3.event.sourceEvent.pageX)-this.offsetHeight/2)+"px")
+// }
+
+// var drag = d3.behavior.drag().on("drag",dragMove);
+
+// d3.select('svg').selectAll('.goodGuy')
+//   .attr('id','draggable').call(drag);
+
+
 
 var makeEnemy = function(){
   d3.select('svg')
