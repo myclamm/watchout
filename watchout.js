@@ -20,6 +20,24 @@ var gameBoard = d3.select('.scoreboard').append('svg:svg')
                   .attr('width', gameOptions.width)
                   .attr('height', gameOptions.height)
 
+//Defining the player dot
+// function is going to select svg
+// append it a circle
+// fill it with red
+
+var makePlayer = function(){
+  d3.select('svg')
+  .append('circle')
+  .attr('r',"10")
+  .attr("class", "goodGuy")
+  .attr('fill','##0000FF')
+  .attr("cx", gameOptions.width/2)
+  .attr("cy", gameOptions.height/2)
+};
+
+makePlayer();
+
+
 var makeEnemy = function(){
   d3.select('svg')
   .append('circle')
@@ -31,8 +49,10 @@ var makeEnemy = function(){
 };
 
 
+
+
 var createNEnemies= function() {
-  for(var i=0;i<30;i++){
+  for(var i=0;i<gameOptions.nEnemies;i++){
     makeEnemy();
   }
 };
@@ -43,10 +63,10 @@ var enemyLoc = [];
 
 var randomizeLocs = function(){
   enemyLoc = [];
-  for(var i=0;i<30;i++){
+  for(var i=0;i<gameOptions.nEnemies;i++){
     enemyLoc.push({'cx': Math.floor(Math.random()*690)})
   }
-  for(var i=0;i<30;i++){
+  for(var i=0;i<gameOptions.nEnemies;i++){
     enemyLoc[i]['cy'] = Math.floor(Math.random()*440)
   }
 }
@@ -56,7 +76,7 @@ var changeEnemyLoc = function() {
   console.log('hi')
   d3.select('svg').selectAll('.badGuys')
     .data(enemyLoc)
-    .transition().duration(500)
+    .transition().duration(1000)
     .attr("cx",function(d){return d['cx']})
     .attr("cy",function(d){return d['cy']})
 };
